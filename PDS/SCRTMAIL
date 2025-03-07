@@ -1,0 +1,8 @@
+%XMITIP scrtlms@dk.ibm.com  +
+        Cc (GlennSiegel@optonline.net)     +
+        MSGDD INDD                         +
+        From GlennSiegel@optonline.net     +
+        Subject '<AUTO> Sub-Capacity Report for &month-1' +
+        FILE ('SYSP.SCRTTOOL.REPORT(+0)' ) +
+        FILENAME (SCRT.CSV)                +
+        FORMAT *CSV

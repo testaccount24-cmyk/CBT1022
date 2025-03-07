@@ -1,0 +1,5 @@
+                                /*                          */
+                                /* SCRT TOOL                */
+MOUNT FILESYSTEM('ZFS.&SYSNAME..SCRTTOOL')
+      MOUNTPOINT('/SCRTTOOL')
+      TYPE(ZFS) MODE(RDWR)
