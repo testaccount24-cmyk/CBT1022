@@ -1,0 +1,155 @@
+//SCRTTOOL PROC AORT=M
+//********************************************************************
+//* Licensed Materials - Property of IBM
+//* SubCapacity Reporting Tool V28 (SCRT)
+//* Copyright IBM Corp. 2001, 2020
+//*
+//* SCRT VERSION 28.1.0 - INTENDED TO RUN ON z/OS
+//*
+//* For recent changes to the Sub-Capacity Reporting Tool (SCRT), see
+//* the SCRT Current Levels document and/or the SCRT User's Guide
+//* available at the Z Software Pricing site:
+//*    www.ibm.com/it-infrastructure/z/software/pricing
+//*
+//* Licensed Materials - Property of IBM
+//* SubCapacity Reporting Tool V25 (SCRT)
+//* Copyright IBM Corp. 2001, 2017
+//*
+//* SCRT VERSION 25 RELEASE 1 - INTENDED TO RUN ON z/OS
+//* REFER TO version.txt FOR FULL VERSION INFORMATION
+//*
+//* FOR QUESTIONS SEE SCRT HOME PAGE ON THE NEXT LINE
+//*    www.ibm.com/systems/z/resources/swprice/subcap/scrt/
+//*
+//* SEE "SUMMARY OF CHANGES FOR V25.1.0" IN THE
+//* SCRT 25.1.0 USERS GUIDE FOR:
+//* - SECTIONS H4 AND H6 REPLACE SECTION H5 IN STANDARD
+//*   SUB-CAP REPORT
+//* - ADDITIONAL COMMAND LINE SUPPORT ON WINDOWS/LINUX
+//* - FIXES.
+//*
+//* SEE "SUMMARY OF CHANGES FOR V24.12.0" IN THE
+//* SCRT 24.12.0 USERS GUIDE FOR:
+//* - SUPPORT FOR GSTRACE DD IN JAVA SCRT
+//* - COMMAND LINE SUPPORT ON WINDOWS/LINUX
+//* - FIXES.
+//*
+//* SEE "SUMMARY OF CHANGES FOR V24.11.0" IN THE
+//* SCRT 24.11.0 USERS GUIDE FOR:
+//* - SUPPORT FOR MULTIPLE VERSION MEASUREMENT(MVM).
+//* - SUPPORT FOR ISV PRODUCT REPORTING.
+//* - FIXES.
+//*
+//* SEE "SUMMARY OF CHANGES FOR V24.10.0" IN THE
+//* SCRT 24.11.0 USERS GUIDE FOR:
+//* - SUPPORT FOR Z SYSTEMS WORKLOAD PRICING FOR CLOUD.
+//* - SUPPORT FOR NEW Z/OS SUB-CAPACITY PRODUCTS.
+//* - FIXES.
+//*
+//* Z/OS SPECIFIC CHANGES:
+//* - SUPPORT FOR MULTIPLE VERSION MEASUREMENT(MVM).
+//* - SUPPORT FOR ISV PRODUCT REPORTING.
+//* - FIXES.
+//*
+//* Z/VSE SPECIFIC CHANGES:
+//* - SUPPORT FOR ISV PRODUCT REPORTING.
+//*
+//* Z/TPF SPECIFIC CHANGES:
+//* - None.
+//*
+//* REQUIREMENTS AND INSTALLATION:
+//*    For SCRT V23.10.0 and above releases only)
+//*   - SCRT requires a minimum Java level of:
+//*        IBM SDK for z/OS, Java Technology Edition, Version 7.0.0.
+//*   - This JCL invokes the Java 8.0 SDK.
+//*   - This JCL invokes the 64-bit JVM and so usage of this
+//*     JCL requires that the 64-bit Java 8.0 SDK is installed.
+//*
+//* - Modifications necessary to run SCRT in the JAVA VM:
+//*
+//*    Tailor the proc and job for your installation:
+//*    1.) Modify the Job card per your installation's requirements
+//*    2.) Modify the EXEC PROC= statement to point to the PDS
+//*        containing the installation version of the JZOS PROC.
+//*    3.) edit JAVA_HOME to point to the location of the Java JDK.
+//*    4.) edit APP_HOME to point to the location of the SCRT JAR file.
+//*    5.) Modify the CLASSPATH to point to the location that SCRT was
+//*        installed in. (This is the location of the scrt.jar file).
+//*
+//*  This job (with the accompanying proc) will call the JZOS batch
+//*  launcher load module. The JZOS batch launcher load module will
+//*  create the JVM under UNIX System Services. This JCL contains
+//*  all relevant information about how to launch the batch job.
+//*  For more information on JZOS, see the following web page:
+//*    www-03.ibm.com/systems/z/os/zos/tools/java/
+//*
+//*  The program will read an SMF file and product sub capacity
+//*  reporting data suitable for import to your favorite spreadsheet
+//*  program.
+//*  After you have reviewed the data in the spreadsheet,
+//*  send the file to IBM using the LMS web interface or email
+//*  the file to IBM.
+//*
+//*  Do a global change on hlq to your desired high level qualifier.
+//*
+//*  Replace the job statement with one that fits your installation
+//*  standards.
+//*
+//*  Point the SMF DD at your SMF dataset containing type 70 and 89
+//*  records for the month to be reported.  Note that for reporting
+//*  purposes a month begins at 00:00 on the second, and ends at
+//*  24:00 on the first of the following month.
+//*
+//*  Update the PARMS and NO89 DD statements below.
+//*
+//*--------------------------------------------------------------------
+//STEP1   EXEC PGM=IEFBR14
+//SYSPRINT  DD SYSOUT=&AORT
+//DD1       DD DISP=(MOD,DELETE),SPACE=(TRK,1),
+//             DSN=SYSP.SCRTTOOL.STDOUT
+//*--------------------------------------------------------------------
+//JVMPRC86 EXEC PROC=JVMPRC86,
+// JAVACLS='com.ibm.scrt.SCRTe'
+//STDENV DD DISP=SHR,DSN=SYSP.SCRT.PARMLIB(SCRTJAVA)
+//*
+//* FOR SEQUENTIAL OUTPUT (ALL CPCS IN ONE DS)
+//* CHANGE SPACE PARAMETER TO SPACE=(TRK,(15,15))
+//OUTPUT    DD DISP=(,CATLG,DELETE),DSN=SYSP.SCRTTOOL.REPORT(+1),
+//             SPACE=(TRK,(15,15),RLSE),UNIT=3390
+//SMF       DD DISP=SHR,DSN=MONTHLY.SMF.SYS1(0)
+//          DD DISP=SHR,DSN=MONTHLY.SMF.SYS2(0)
+//          DD DISP=SHR,DSN=NEW.MONTHLY.DAILY.FILES.SYS1
+//          DD DISP=SHR,DSN=NEW.MONTHLY.DAILY.FILES.SYS2
+//PARMS     DD DISP=SHR,DSN=SYSP.SCRT.PARMLIB(SCRTPARM)
+//* FOLLOWING DD IS FOR OPTIONAL USE BY z/OS, z/TPF CUSTOMERS
+//*  UNCOMMENT DESIRED CONTROL STMTS AND PROVIDE MISSING VALUES
+//SPECIAL   DD DISP=SHR,DSN=SYSP.SCRT.PARMLIB(SPECIAL)
+//* FOLLOWING DD IS FOR OPTIONAL USE BY z/OS CUSTOMERS.
+//*  UNCOMMENT THE DD TO SPECIFY CSV FILE(S) PROVIDING INPUT FOR
+//*  EITHER MOBILE WORKLOAD PRICING OR IBM Z SYSTEMS COLLOCATED
+//*  APPLICATION PRICING.
+//* //INPUTCSV  DD  *
+//*
+//NO89      DD DISP=SHR,DSN=SYSP.SCRT.PARMLIB(SCRTNO89)
+//SYSLOUT   DD SYSOUT=&AORT
+//STDOUT    DD DISP=(,CATLG),DSN=SYSP.SCRTTOOL.STDOUT,
+//             SPACE=(CYL,(1,1),RLSE),UNIT=3390,LRECL=133
+//SYSPRINT  DD SYSOUT=&AORT
+//*--------------------------------------------------------------------
+//STEP2   EXEC PGM=IEBGENER
+//SYSPRINT  DD SYSOUT=&AORT
+//SYSUT1    DD DISP=SHR,DSN=SYSP.SCRTTOOL.STDOUT
+//SYSUT2    DD SYSOUT=&AORT
+//SYSIN     DD DUMMY
+//*--------------------------------------------------------------------
+//EMAIL     EXEC PGM=IKJEFT1B,DYNAMNBR=50
+//STEPLIB   DD DISP=SHR,DSN=SYSP.XMITIP.LOAD
+//SYSEXEC   DD DISP=SHR,DSN=SYSP.XMITIP.EXEC
+//SYSPRINT  DD  SYSOUT=&AORT
+//SYSTSPRT  DD  SYSOUT=&AORT
+//SYSTSIN   DD  DISP=SHR,DSN=SYSP.SCRT.PARMLIB(SCRTMAIL)
+//INDD      DD  DISP=SHR,DSN=SYSP.SCRTTOOL.STDOUT
+//*
+//*--------------------------------------------------------------------
+//*  T H I S   T H E   E N D   O F   T H E   P R O C   S C R T O O L
+//*--------------------------------------------------------------------

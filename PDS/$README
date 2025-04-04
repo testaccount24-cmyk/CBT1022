@@ -1,0 +1,77 @@
+//*                                                                 *  FILE 1022
+//*     Here is my version of the automation and emailing of IBM's  *  FILE 1022
+//*     SCRT report by Glenn Siegel.                                *  FILE 1022
+//*     This process/job is scheduled to run on third day of every  *  FILE 1022
+//*     month.                                                      *  FILE 1022
+//*     I use XMITIP to email my reports.  This is a great email    *  FILE 1022
+//*     tool by Lionel B. Dyck, thank you for all of your work      *  FILE 1022
+//*     Lionel.                                                     *  FILE 1022
+//*     If you don't have it you'll need it for this process.       *  FILE 1022
+//*                                                                 *  FILE 1022
+//*   - Place member SCRTJCL into your schedulers JCL library, name *  FILE 1022
+//*     it SCRTTOOL.  Set your scheduler to submit it on the third  *  FILE 1022
+//*     day of every month.                                         *  FILE 1022
+//*                                                                 *  FILE 1022
+//*   - Place member SCRTPROC into your PROCLIB, name it SCRTTOOL.  *  FILE 1022
+//*                                                                 *  FILE 1022
+//*   - Create or use a PARMLIB dataset and place the following     *  FILE 1022
+//*     members into it:                                            *  FILE 1022
+//*     SCRTJAVA                                                    *  FILE 1022
+//*     SCRTMAIL                                                    *  FILE 1022
+//*     SCRTNO89                                                    *  FILE 1022
+//*     SCRTPARM                                                    *  FILE 1022
+//*     SPECIAL                                                     *  FILE 1022
+//*     Modify PROCLIB member SCRTTOOL to reflect the PARMLIB       *  FILE 1022
+//*     dataset name.                                               *  FILE 1022
+//*                                                                 *  FILE 1022
+//*   - Check and/or modify PARMLIB member SCRTJAVA for the JAVA    *  FILE 1022
+//*     home directory /usr/lpp/java/J8.0_64 is what I use.         *  FILE 1022
+//*                                                                 *  FILE 1022
+//*   - Create a mount point directory in your zfs file system, I   *  FILE 1022
+//*     use /SCRTTOOL/.  If you change it modify PARMLIB member     *  FILE 1022
+//*     SCRTJAVA to reflect your location.                          *  FILE 1022
+//*                                                                 *  FILE 1022
+//*   - Create a zfs file for the SCRTTOOL directory. This makes    *  FILE 1022
+//*     it easier when upgrading systems and maintenance.  I've     *  FILE 1022
+//*     provided JCL SCRTZFS to create zfs file.  Mount this zfs    *  FILE 1022
+//*     file to the directory above.  I've provided a member        *  FILE 1022
+//*     ZFSMOUNT to place into your BPXPRMFS PARMLIB member so      *  FILE 1022
+//*     it'll get mounted on all IPL's.                             *  FILE 1022
+//*                                                                 *  FILE 1022
+//*   - Create a new directory /SCRTTOOL/scrtv###, ### being the    *  FILE 1022
+//*     SCRTTOOL version.  This is where you place the IBM JAR      *  FILE 1022
+//*     file.  I create a new directory for every new version.  As  *  FILE 1022
+//*     of this writing scrtv281 is the current release you will    *  FILE 1022
+//*     need to modify the PARMLIB member SCRTJAVA to reflect the   *  FILE 1022
+//*     new directory.                                              *  FILE 1022
+//*                                                                 *  FILE 1022
+//*   - I've provided PARMLIB member SCRTNO89.  You should use      *  FILE 1022
+//*     your copy or the latest one from IBM and modify it.         *  FILE 1022
+//*                                                                 *  FILE 1022
+//*   - I've provided PARMLIB member SCRTPARM.  You should use      *  FILE 1022
+//*     your copy or the latest one from IBM and modify it.         *  FILE 1022
+//*                                                                 *  FILE 1022
+//*   - Modify PARMLIB member SCRTMAIL to reflect the contact name  *  FILE 1022
+//*     email address reflected in PARMLIB member SCRTPARM.         *  FILE 1022
+//*                                                                 *  FILE 1022
+//*   - I've provided PARMLIB member SPECIAL.  You should use       *  FILE 1022
+//*     your copy or the latest one from IBM and modify it.         *  FILE 1022
+//*                                                                 *  FILE 1022
+//*   - I've provided member DEFGDG to define a GDG for the SCRT    *  FILE 1022
+//*     report files.  I use the maximum amount 255 as it's a small *  FILE 1022
+//*     1 track dataset.  If you change the name you'll have to     *  FILE 1022
+//*     change both the PROCLIB member SCRTTOOL and the PARMLIB     *  FILE 1022
+//*     member SCRTMAIL.                                            *  FILE 1022
+//*                                                                 *  FILE 1022
+//*   - I mod the entire month of SMF data to one file in a prior   *  FILE 1022
+//*     job not here.  This report uses the second day of the month *  FILE 1022
+//*     through the first day of the month.  You'll note the two    *  FILE 1022
+//*     files, one monthly and one daily for each of the two        *  FILE 1022
+//*     systems in PROCLIB member SCRTTOOL as input.                *  FILE 1022
+//*                                                                 *  FILE 1022
+//*   - You can run this whenever you want as a test IBM will just  *  FILE 1022
+//*     send back an email saying declined.                         *  FILE 1022
+//*                                                                 *  FILE 1022
+//*                                                                 *  FILE 1022
+//*     Author: Glenn Siegel                                        *  FILE 1022
+//*             S.S.C. Corp.                                        *  FILE 1022
